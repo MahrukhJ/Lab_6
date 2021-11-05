@@ -209,6 +209,12 @@ AIC: 5109.7
 
 Number of Fisher Scoring iterations: 6'
 
+#In model_logit3, EEDUCbach deg, EEDUCadv deg, RaceAsion, RaceOther, KIDS_LT5YYes children under 5 in HH, KIDS_5_11YYes children 5 - 11 in HH, KIDS_12_17YYes children 12 - 17 in HH,
+#LIVQTRRVlive in detached 1 family, LIVQTRRVlive in 1 family attached to others and LIVQTRRVlive in bldg w 5+ apts are all very statistically significant. Specifically, EEDUCbach deg, EEDUCadv deg,
+#RACEAsian, LIVQTRRVlive in detached 1 family, LIVQTRRVlive in 1 family attached to others and LIVQTRRVlive in bldg w 5+ apts have coefficient estimates of 1.444970, 1.926579, 1.206285, 0.685428,
+#0.615383 and 0.826141, respectively. That indicates that people in these categories are more likely to get vaccinated whereas negative coefficient estimates that are statistically significant imply that
+#those people are not likely to get vaccinated. 
+
 #I'm going to create a different subset and observe the differences between the models when the variables are identical. 
 #This subset will consist of people who have public health insurance and reside in the West. 
 dat_use2 <- subset(Household_Pulse_data, (Household_Pulse_data$PUBHLTH == "has public health ins") & (Household_Pulse_data$REGION == "West"))
@@ -268,13 +274,13 @@ Number of Fisher Scoring iterations: 6'
 #without a bachelors degree or without an advanced degree since the estimate for EEDUCbach deg is 1.91062 and the estimate for EEDUCadv deg is 2.38182. In contrast, RACEOther 
 #has an estimate value of -0.85249 which indicates that people in this category are very likely to not get vaccinated. 
 
-I attempted to predict values from model_logit2 however, an error was found where variable lengths differed for 'RHISPANIC' which is why the following model omits RHISPANIC. 
+I attempted to predict values from model_logit2, however, an error was found where variable lengths differed for 'RHISPANIC' which is why the following model omits RHISPANIC. 
 
 model_logit2_again <- glm(vaxx ~ EEDUC + MS + RRACE + GENID_DESCRIBE,
                           family = binomial, data = dat_use1)
 summary(model_logit2_again)
 
-I will predict the probability of a White woman who is married and has a bachelors degree with the folowing code. 
+#I will predict the probability of a White woman who is married and has a bachelors degree with the folowing code. 
 to_be_predicted_1 <- data.frame(EEDUC = "bach deg", MS = "married", RRACE = "White", GENID_DESCRIBE = "female", data = dat_use1)
 to_be_predicted_1$yhat <- predict(model_logit2_again, to_be_predicted_1, type = "response")
 summary(to_be_predicted_1$yhat)
@@ -282,7 +288,7 @@ summary(to_be_predicted_1$yhat)
 0.9547  0.9547  0.9547  0.9547  0.9547  0.9547'
 
 To analyze the results, the probability of a white, married woman who has a bachelors degree in the subset of people in the Northeast is 95.47. 
-A very high probability which honestly, I was not expecting! I am interested in observing the difference between the code output if EEDUC was equal to "adv deg" instead of "bach deg".
+A very high probability which honestly! I am interested in observing the difference between the code output if EEDUC was equal to "adv deg" instead of "bach deg".
 
 to_be_predicted1 <- data.frame(EEDUC = "adv deg", MS = "married", RRACE = "White", GENID_DESCRIBE = "female", data = dat_use1)
 to_be_predicted1$yhat <- predict(model_logit2_again, to_be_predicted1, type = "response")
@@ -291,7 +297,7 @@ summary(to_be_predicted1$yhat)
 'Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 0.9712  0.9712  0.9712  0.9712  0.9712  0.9712'
 The probability increases to 97.12! 
-  More specifically, a white, married woman who lives in the Northeast region and has obtained an adanced degree has a predicted probability of 97.12 percent for being vaccinated. 
+More specifically, a white, married woman who lives in the Northeast region and has obtained an adanced degree has a predicted probability of 97.12 percent of getting vaccinated. 
 
 Attempting to predict the probability of a divorced Black male with a HS diploma in a subset of people residing in the West who have public health insurance.
 model_logit4 <- glm(vaxx ~ EEDUC + MS + RRACE + RHISPANIC + GENID_DESCRIBE,
@@ -303,7 +309,7 @@ summary(to_be_predicted3$yhat)
 0.7942  0.7942  0.7942  0.7942  0.7942  0.7942' 
 
 The probability of a divorced Black male with a HS diploma in a subset of people residing in the West and who have public health insurance getting vaccinated is 79.42. 
-A prediction probability significantly less than the predictions generated from to_be_predicted_1 and to_be_predicted1. 
+A probability prediction significantly less than the predictions generated from to_be_predicted_1 and to_be_predicted1. 
 
 #Moving on to probit models!
 A probit regression is used to model binary outcome variables where the inverse standard normal distribution of the probability is modeled as a linear combination of the predictors.
